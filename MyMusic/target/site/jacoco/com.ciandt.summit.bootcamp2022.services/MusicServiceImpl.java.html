@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MusicServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">summit-bootcamp</a> &gt; <a href="index.source.html" class="el_package">com.ciandt.summit.bootcamp2022.services</a> &gt; <span class="el_source">MusicServiceImpl.java</span></div><h1>MusicServiceImpl.java</h1><pre class="source lang-java linenums">package com.ciandt.summit.bootcamp2022.services;
+
+import com.ciandt.summit.bootcamp2022.dto.UsernameDto;
+import com.ciandt.summit.bootcamp2022.entity.Music;
+import com.ciandt.summit.bootcamp2022.repositories.MusicRepository;
+import com.ciandt.summit.bootcamp2022.services.exceptions.ResourceNotFoundException;
+import com.ciandt.summit.bootcamp2022.services.exceptions.ValidateSizeNameException;
+import com.ciandt.summit.bootcamp2022.utils.TokenService;
+import com.ciandt.summit.bootcamp2022.utils.exceptions.InvalidLogDataException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+import javax.ws.rs.core.Response;
+import java.util.List;
+
+import static javax.ws.rs.core.Response.status;
+
+@Service
+<span class="fc" id="L23">public class MusicServiceImpl implements MusicService {</span>
+
+    @Autowired
+    private MusicRepository musicRepository;
+
+<span class="fc" id="L28">    private static Logger logger = LogManager.getLogger(MusicServiceImpl.class);</span>
+
+    @Autowired
+    private TokenService tokenService;
+
+    @Override
+    public List&lt;Music&gt; getMusics(String name, UsernameDto usernameDto) {
+        try {
+<span class="fc" id="L36">            tokenService.validateToken(usernameDto);</span>
+<span class="fc bfc" id="L37" title="All 2 branches covered.">            if (!checkWordSize(name)) {</span>
+<span class="fc" id="L38">                throw new ValidateSizeNameException(&quot;Artist's name mustn't have less than 2 characters&quot;);</span>
+            }
+<span class="fc" id="L40">            List&lt;Music&gt; music = musicRepository.getAllMusicArtist(name);</span>
+<span class="fc" id="L41">            logger.info(&quot;Music/Artist found&quot;);</span>
+<span class="fc" id="L42">            return music;</span>
+<span class="fc" id="L43">        } catch (InvalidLogDataException e) {</span>
+<span class="fc" id="L44">            logger.error(&quot;Invalid Token name&quot;);</span>
+<span class="fc" id="L45">            throw new InvalidLogDataException(e.getMessage());</span>
+        }
+    }
+
+    private boolean checkWordSize(String name) {
+<span class="fc" id="L50">        boolean check = true;</span>
+<span class="pc bpc" id="L51" title="1 of 4 branches missed.">        if (name.length() &lt; 2 || name == null) {</span>
+<span class="fc" id="L52">            check = false;</span>
+        }
+<span class="fc" id="L54">        return check;</span>
+    }
+
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

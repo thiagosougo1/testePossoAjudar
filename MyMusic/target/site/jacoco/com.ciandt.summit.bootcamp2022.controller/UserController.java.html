@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">summit-bootcamp</a> &gt; <a href="index.source.html" class="el_package">com.ciandt.summit.bootcamp2022.controller</a> &gt; <span class="el_source">UserController.java</span></div><h1>UserController.java</h1><pre class="source lang-java linenums">package com.ciandt.summit.bootcamp2022.controller;
+
+import com.ciandt.summit.bootcamp2022.dto.Data;
+import com.ciandt.summit.bootcamp2022.dto.UserDTO;
+import com.ciandt.summit.bootcamp2022.dto.UsernameDto;
+import com.ciandt.summit.bootcamp2022.services.UserService;
+import com.ciandt.summit.bootcamp2022.utils.TokenService;
+import com.ciandt.summit.bootcamp2022.utils.exceptions.InvalidLogDataException;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping(value = &quot;/users&quot;)//mudar endpoint
+<span class="fc" id="L16">public class UserController {</span>
+
+    @Autowired
+    TokenService tokenFeignClient;
+
+    @Autowired
+    private UserService userService;
+
+    @ApiOperation(value = &quot;This request generates the authentication token&quot;)
+    @PostMapping
+    public String getToken(@RequestBody UsernameDto username) throws InvalidLogDataException {
+<span class="fc" id="L27">        return tokenFeignClient.createToken(username);</span>
+    }
+
+
+    @ApiOperation(value = &quot;This request get User by Id&quot;)
+    @GetMapping(&quot;/{userId}&quot;)
+    public ResponseEntity&lt;UserDTO&gt; getUserById(@PathVariable String userId
+            , @RequestHeader(value = &quot;name&quot;) String nome
+            , @RequestHeader(value = &quot;token&quot;) String token) {
+
+<span class="fc" id="L37">        UsernameDto usernameDto = new UsernameDto(new Data(nome, token));</span>
+<span class="fc" id="L38">        UserDTO dto = userService.getUserById(userId, usernameDto);</span>
+<span class="fc" id="L39">        return ResponseEntity.ok().body(dto);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">summit-bootcamp</a> &gt; <a href="index.source.html" class="el_package">com.ciandt.summit.bootcamp2022.services</a> &gt; <span class="el_source">UserServiceImpl.java</span></div><h1>UserServiceImpl.java</h1><pre class="source lang-java linenums">package com.ciandt.summit.bootcamp2022.services;
+
+import com.ciandt.summit.bootcamp2022.dto.UserDTO;
+import com.ciandt.summit.bootcamp2022.dto.UsernameDto;
+import com.ciandt.summit.bootcamp2022.entity.User;
+import com.ciandt.summit.bootcamp2022.repositories.UserRepository;
+import com.ciandt.summit.bootcamp2022.services.exceptions.ResourceNotFoundException;
+import com.ciandt.summit.bootcamp2022.utils.TokenService;
+import com.ciandt.summit.bootcamp2022.utils.exceptions.InvalidLogDataException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityNotFoundException;
+
+@Service
+<span class="fc" id="L19">public class UserServiceImpl implements UserService{</span>
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private TokenService tokenService;
+
+<span class="fc" id="L27">    private static Logger logger = LogManager.getLogger(PlaylistServiceImpl.class);</span>
+
+    @Transactional
+    @Override
+    public UserDTO getUserById(String id, UsernameDto usernameDto) {
+        try {
+<span class="fc" id="L33">            tokenService.validateToken(usernameDto);</span>
+<span class="fc" id="L34">            User user = userRepository.getById(id);</span>
+<span class="fc" id="L35">            UserDTO dto = new UserDTO(user);</span>
+<span class="fc" id="L36">            return dto;</span>
+<span class="fc" id="L37">        } catch (InvalidLogDataException e ) {</span>
+<span class="fc" id="L38">            logger.error(&quot;Invalid Token name&quot;);</span>
+<span class="fc" id="L39">            throw new InvalidLogDataException(e.getMessage());</span>
+<span class="nc" id="L40">        } catch (EntityNotFoundException e) {</span>
+<span class="nc" id="L41">            logger.error(&quot;User not found!&quot;);</span>
+<span class="nc" id="L42">            throw new ResourceNotFoundException(&quot;User not found!&quot;);</span>
+        }
+
+
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
